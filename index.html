@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetMap Pro — Inventaris Aset TI & Penemuan Jaringan</title>
+    <style>
+        :root {
+            --bg: #0b0f17;
+            --surface: #111827;
+            --surface2: #1a1f2e;
+            --border: #1e293b;
+            --text: #e2e8f0;
+            --text2: #94a3b8;
+            --accent: #3b82f6;
+            --accent2: #2563eb;
+            --green: #10b981;
+            --red: #ef4444;
+            --yellow: #f59e0b;
+            --orange: #f97316;
+            --purple: #8b5cf6;
+            --radius: 10px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+            --transition: 0.2s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Login Screen */
+        #loginScreen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, #111c30 0%, #080c16 70%);
+        }
+        #loginScreen .login-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px 36px;
+            width: 420px;
+            box-shadow: var(--shadow);
+        }
+        #loginScreen h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        #loginScreen h1 span {
+            color: var(--accent);
+        }
+        #loginScreen .subtitle {
+            text-align: center;
+            color: var(--text2);
+            font-size: 0.9rem;
+            margin-bottom: 28px;
+        }
+        #loginScreen input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            outline: none;
+            transition: var(--transition);
+        }
+        #loginScreen input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        #loginScreen .btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: var(--radius);
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background: var(--accent2);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+            margin-top: 8px;
+        }
+        .btn-outline:hover {
+            background: var(--surface2);
+        }
+        .btn-sm {
+            padding: 7px 14px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .btn-sm:hover {
+            background: var(--border);
+        }
+        .btn-sm.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        .btn-sm.primary:hover {
+            background: var(--accent2);
+        }
+        .btn-sm.danger {
+            border-color: var(--red);
+            color: var(--red);
+        }
+        .btn-sm.danger:hover {
+            background: var(--red);
+            color: #fff;
+        }
+        .msg {
+            text-align: center;
+            font-size: 0.85rem;
+            margin-top: 6px;
+            min-height: 20px;
+        }
+        .msg.error {
+            color: var(--red);
+        }
+        .msg.success {
+            color: var(--green);
+        }
+        /* App Layout */
+        #appScreen {
+            display: none;
+            flex-direction: column;
+            height: 100vh;
+        }
+        #appScreen.active {
+            display: flex;
+        }
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+        header .logo {
+            font-weight: 700;
+            font-size: 1.3rem;
+            letter-spacing: -0.3px;
+        }
+        header .logo span {
+            color: var(--accent);
+        }
+        header .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        header .user-info {
+            color: var(--text2);
+            font-size: 0.85rem;
+        }
+        nav.tabs {
+            display: flex;
+            gap: 2px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 0 20px;
+            flex-shrink: 0;
+            overflow-x: auto;
+        }
+        nav.tabs button {
+            padding: 12px 18px;
+            background: transparent;
+            border: none;
+            color: var(--text2);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        nav.tabs button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        nav.tabs button:hover {
+            color: var(--text);
+        }
+        main {
+            flex: 1;
+            overflow: auto;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 16px;
+            flex: 1;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+        /* Cards & Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 18px;
+            box-shadow: var(--shadow);
+        }
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .stat-card .stat-label {
+            color: var(--text2);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+        .stat-card.accent {
+            border-left: 4px solid var(--accent);
+        }
+        .stat-card.green {
+            border-left: 4px solid var(--green);
+        }
+        .stat-card.yellow {
+            border-left: 4px solid var(--yellow);
+        }
+        .stat-card.red {
+            border-left: 4px solid var(--red);
+        }
+        /* Table */
+        .table-container {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: auto;
+            box-shadow: var(--shadow);
+            flex: 1;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        th,
+        td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+            white-space: nowrap;
+        }
+        th {
+            background: var(--surface2);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 600;
+            color: var(--text2);
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+        th:hover {
+            color: var(--text);
+        }
+        th .sort-icon {
+            margin-left: 4px;
+            font-size: 0.7rem;
+        }
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .search-bar input {
+            padding: 9px 14px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            font-size: 0.9rem;
+            outline: none;
+            min-width: 240px;
+        }
+        .search-bar input:focus {
+            border-color: var(--accent);
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .badge.online {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green);
+        }
+        .badge.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red);
+        }
+        .badge.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow);
+        }
+        /* Slide Panel */
+        .slide-panel {
+            position: fixed;
+            right: -600px;
+            top: 0;
+            width: 550px;
+            max-width: 95vw;
+            height: 100vh;
+            background: var(--surface);
+            border-left: 1px solid var(--border);
+            box-shadow: -8px 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .slide-panel.open {
+            right: 0;
+        }
+        .slide-panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        .slide-panel-body {
+            flex: 1;
+            overflow: auto;
+            padding: 16px 20px;
+        }
+        .slide-panel-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            padding: 0 16px;
+        }
+        .slide-panel-tabs button {
+            padding: 10px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text2);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            font-size: 0.85rem;
+        }
+        .slide-panel-tabs button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 150;
+            display: none;
+        }
+        .overlay.active {
+            display: block;
+        }
+        /* Scan console */
+        .scan-console {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 14px;
+            border-radius: var(--radius);
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+        }
+        .progress-bar {
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 250;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            width: 480px;
+            max-width: 95vw;
+            box-shadow: var(--shadow);
+        }
+        .modal h3 {
+            margin-bottom: 16px;
+        }
+        .modal input,
+        .modal select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: var(--surface2);
+            color: var(--text);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .modal .btn-row {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+        @media (max-width: 768px) {
+            nav.tabs button {
+                padding: 10px 12px;
+                font-size: 0.78rem;
+            }
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .slide-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <h1>Net<span>Map</span> Pro</h1>
+            <p class="subtitle">Inventaris Aset TI & Penemuan Jaringan</p>
+            <input type="text" id="loginUser" placeholder="Nama pengguna" autocomplete="off">
+            <input type="password" id="loginPass" placeholder="Kata sandi">
+            <button class="btn btn-primary" onclick="doLogin()">Masuk</button>
+            <button class="btn btn-outline" onclick="demoLogin()">🔍 Jelajahi dengan Akun Demo</button>
+            <div class="msg" id="loginMsg"></div>
+        </div>
+    </div>
+
+    <!-- APP SCREEN -->
+    <div id="appScreen">
+        <header>
+            <div class="logo">Net<span>Map</span> Pro</div>
+            <div class="header-actions">
+                <span class="user-info" id="headerUser"></span>
+                <button class="btn-sm" onclick="logout()">Keluar</button>
+            </div>
+        </header>
+        <nav class="tabs" id="navTabs">
+            <button data-tab="dashboard" class="active">📊 Dasbor</button>
+            <button data-tab="devices">🖥️ Perangkat</button>
+            <button data-tab="software">💿 Perangkat Lunak</button>
+            <button data-tab="users">👤 Pengguna</button>
+            <button data-tab="network">🌐 Jaringan</button>
+            <button data-tab="credentials">🔐 Kredensial</button>
+            <button data-tab="scanner">🔎 Pemindaian</button>
+            <button data-tab="reports">📋 Laporan</button>
+            <button data-tab="audit">📝 Audit</button>
+        </nav>
+        <main id="mainContent"></main>
+    </div>
+
+    <!-- OVERLAY & SLIDE PANEL -->
+    <div class="overlay" id="overlay" onclick="closeSlidePanel()"></div>
+    <div class="slide-panel" id="slidePanel">
+        <div class="slide-panel-header">
+            <strong id="slideTitle">Detail Perangkat</strong>
+            <button class="btn-sm" onclick="closeSlidePanel()">✕</button>
+        </div>
+        <div class="slide-panel-tabs" id="slideTabs">
+            <button data-stab="overview" class="active">Ikhtisar</button>
+            <button data-stab="software">Perangkat Lunak</button>
+            <button data-stab="users">Pengguna</button>
+            <button data-stab="network">Jaringan</button>
+        </div>
+        <div class="slide-panel-body" id="slideBody"></div>
+    </div>
+
+    <!-- MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modalContent"></div>
+    </div>
+
+    <script>
+        // ==================== DATABASE LAYER ====================
+        const DB_NAME = 'NetMapProDB';
+        const DB_VERSION = 3;
+        let db = null;
+        let currentUser = null;
+        let currentOrgId = null;
+        let currentSlideDeviceId = null;
+        let currentSlideTab = 'overview';
+
+        const STORES = {
+            orgs: { key: 'id', indexes: ['username'] },
+            devices: { key: 'id', indexes: ['orgId', 'type', 'status', 'department', 'os', 'name'] },
+            software: { key: 'id', indexes: ['orgId', 'deviceId', 'name', 'version'] },
+            users: { key: 'id', indexes: ['orgId', 'deviceId', 'username', 'type'] },
+            networks: { key: 'id', indexes: ['orgId', 'subnet', 'vlan'] },
+            credentials: { key: 'id', indexes: ['orgId', 'type'] },
+            scans: { key: 'id', indexes: ['orgId', 'status'] },
+            auditLogs: { key: 'id', indexes: ['orgId', 'timestamp', 'action'] },
+            settings: { key: 'key', indexes: [] },
+        };
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const d = e.target.result;
+                    for (const [name, config] of Object.entries(STORES)) {
+                        if (!d.objectStoreNames.contains(name)) {
+                            const store = d.createObjectStore(name, { keyPath: config.key, autoIncrement: name !==
+                                    'settings' && name !== 'orgs' });
+                            for (const idx of config.indexes) {
+                                store.createIndex(idx, idx, { unique: false });
+                            }
+                        }
+                    }
+                };
+                req.onsuccess = (e) => { db = e.target.result;
+                    resolve(db); };
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function tx(storeName, mode = 'readonly') {
+            const transaction = db.transaction(storeName, mode);
+            return transaction.objectStore(storeName);
+        }
+
+        function dbAdd(storeName, item) {
+            return new Promise((res, rej) => {
+                const store = tx(storeName, 'readwrite');
+                const req = store.add(item);
+                req.onsuccess = () => res(req.result);
+                req.onerror = () => rej(req.error);
+            });
+        }
+
+        function dbPut(storeName, item) {
+            return new Promise((res, rej) => {
+                const store = tx(storeName, 'readwrite');
+                const req = store.put(item);
+                req.onsuccess = () => res(req.result);
+                req.onerror = () => rej(req.error);
+            });
+        }
+
+        function dbGet(storeName, id) {
+            return new Promise((res, rej) => {
+                const store = tx(storeName);
+                const req = store.get(id);
+                req.onsuccess = () => res(req.result);
+                req.onerror = () => rej(req.error);
+            });
+        }
+
+        function dbGetAll(storeName, indexName, value) {
+            return new Promise((res, rej) => {
+                const store = tx(storeName);
+                let req;
+                if (indexName && value !== undefined) {
+                    const idx = store.index(indexName);
+                    req = idx.getAll(value);
+                } else {
+                    req = store.getAll();
+                }
+                req.onsuccess = () => res(req.result);
+                req.onerror = () => rej(req.error);
+            });
+        }
+
+        function dbDelete(storeName, id) {
+            return new Promise((res, rej) => {
+                const store = tx(storeName, 'readwrite');
+                const req = store.delete(id);
+                req.onsuccess = () => res();
+                req.onerror = () => rej(req.error);
+            });
+        }
+
+        function dbClear(storeName) {
+            return new Promise((res, rej) => {
+                const store = tx(storeName, 'readwrite');
+                const req = store.clear();
+                req.onsuccess = () => res();
+                req.onerror = () => rej(req.error);
+            });
+        }
+
+        // ==================== CRYPTO ====================
+        async function hashPassword(password, salt) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password + salt);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function generateSalt() {
+            const arr = new Uint8Array(16);
+            crypto.getRandomValues(arr);
+            return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // ==================== AUDIT LOGGING ====================
+        async function logAudit(action, details = '') {
+            const entry = {
+                id: Date.now().toString() + Math.random().toString(36).substr(2, 4),
+                orgId: currentOrgId,
+                userId: currentUser?.id || 'system',
+                username: currentUser?.username || 'system',
+                action,
+                details,
+                timestamp: new Date().toISOString(),
+            };
+            await dbAdd('auditLogs', entry);
+        }
+
+        // ==================== DEMO DATA GENERATOR ====================
+        async function seedDemoData(orgId) {
+            const deviceTypes = ['Workstation', 'Server', 'Hypervisor', 'Switch', 'Firewall', 'Router', 'NAS', 'Printer'];
+            const osList = ['Windows 11 Pro', 'Windows 11 Enterprise', 'Windows 10 Pro', 'macOS Ventura', 'Ubuntu 22.04 LTS',
+                'RHEL 9', 'Windows Server 2022', 'ESXi 8.0', 'Cisco IOS', 'pfSense', 'Debian 12', 'Windows 10 Enterprise',
+                'macOS Sonoma'
+            ];
+            const manufacturers = ['Dell', 'HP', 'Lenovo', 'Apple', 'Microsoft', 'HPE', 'Supermicro', 'Cisco', 'Netgate'];
+            const departments = ['IT', 'Engineering', 'Marketing', 'Finance', 'HR', 'Sales', 'Operations', 'Executive'];
+            const locations = ['Jakarta', 'Bandung', 'Surabaya', 'Singapore', 'Remote'];
+            const subnets = ['10.0.1.0/24', '10.0.2.0/24', '10.0.10.0/24', '192.168.1.0/24', '172.16.0.0/20'];
+            const vlans = [10, 20, 30, 40, 99];
+            const softwareApps = [
+                { name: 'Microsoft 365', versions: ['16.0.16026', '16.0.15831'] },
+                { name: 'Google Chrome', versions: ['118.0', '119.0', '117.0'] },
+                { name: 'Adobe Acrobat Reader', versions: ['2023.006', '2023.008'] },
+                { name: 'Slack', versions: ['4.35', '4.36'] },
+                { name: 'Zoom', versions: ['5.16', '5.17'] },
+                { name: 'Visual Studio Code', versions: ['1.84', '1.83'] },
+                { name: 'Docker Desktop', versions: ['4.25', '4.24'] },
+                { name: 'Python', versions: ['3.11', '3.12'] },
+                { name: 'Node.js', versions: ['20.9', '18.18'] },
+                { name: 'Git', versions: ['2.42', '2.41'] },
+                { name: 'Postman', versions: ['10.20', '10.19'] },
+                { name: 'Wireshark', versions: ['4.2', '4.0'] },
+            ];
+            const domainUsers = ['admin_joko', 'santi.w', 'budi.p', 'rini.k', 'agus.t', 'dewi.s', 'eko.n', 'fajar.h',
+                'gita.r'
+            ];
+            const localUsers = ['Administrator', 'localadmin', 'user', 'guest'];
+
+            const devices = [];
+            for (let i = 0; i < 87; i++) {
+                const type = deviceTypes[Math.floor(Math.random() * deviceTypes.length)];
+                const os = osList[Math.floor(Math.random() * osList.length)];
+                const manufacturer = manufacturers[Math.floor(Math.random() * manufacturers.length)];
+                const dept = departments[Math.floor(Math.random() * departments.length)];
+                const loc = locations[Math.floor(Math.random() * locations.length)];
+                const status = Math.random() > 0.12 ? 'online' : 'offline';
+                const subnet = subnets[Math.floor(Math.random() * subnets.length)];
+                const vlan = vlans[Math.floor(Math.random() * vlans.length)];
+                const ipLast = Math.floor(Math.random() * 250) + 2;
+                const ip = subnet.replace('0/24', ipLast).replace('/20', '.' + (Math.floor(Math.random() * 200) + 10));
+                const mac = Array.from({ length: 6 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2,
+                    '0')).join(':');
+                const purchaseDate = new Date(Date.now() - Math.random() * 5 * 365 * 86400000);
+                const warrantyYears = Math.floor(Math.random() * 5) + 1;
+                const warrantyEnd = new Date(purchaseDate);
+                warrantyEnd.setFullYear(warrantyEnd.getFullYear() + warrantyYears);
+                const cost = Math.floor(Math.random() * 80000000) + 5000000;
+
+                const device = {
+                    id: 'dev-' + (i + 1).toString().padStart(3, '0'),
+                    orgId,
+                    name: `${manufacturer}-${type.substring(0, 4)}-${(i + 1).toString().padStart(2, '0')}`,
+                    type,
+                    os,
+                    manufacturer,
+                    model: `${manufacturer} ${type} ${Math.floor(Math.random() * 9000) + 1000}`,
+                    serial: 'SN' + Math.random().toString(36).substr(2, 10).toUpperCase(),
+                    ip,
+                    mac,
+                    status,
+                    department: dept,
+                    location: loc,
+                    assignedTo: domainUsers[Math.floor(Math.random() * domainUsers.length)],
+                    purchaseDate: purchaseDate.toISOString().split('T')[0],
+                    warrantyEnd: warrantyEnd.toISOString().split('T')[0],
+                    cost,
+                    cpu: `Intel Core i${Math.floor(Math.random()*9)+5}-${Math.floor(Math.random()*14000)+1000}`,
+                    ram: `${[8,16,32,64,128][Math.floor(Math.random()*5)]} GB`,
+                    storage: `${[256,512,1024,2048][Math.floor(Math.random()*4)]} GB SSD`,
+                    notes: '',
+                    createdAt: new Date().toISOString(),
+                };
+                devices.push(device);
+            }
+
+            // Insert devices
+            for (const d of devices) await dbAdd('devices', d);
+
+            // Software
+            const softwareEntries = [];
+            for (const d of devices) {
+                const numApps = Math.floor(Math.random() * 8) + 3;
+                const shuffled = [...softwareApps].sort(() => Math.random() - 0.5);
+                for (let j = 0; j < Math.min(numApps, shuffled.length); j++) {
+                    const app = shuffled[j];
+                    const ver = app.versions[Math.floor(Math.random() * app.versions.length)];
+                    softwareEntries.push({
+                        id: 'sw-' + d.id + '-' + j,
+                        orgId,
+                        deviceId: d.id,
+                        name: app.name,
+                        version: ver,
+                        vendor: app.name.split(' ')[0],
+                        installDate: new Date(Date.now() - Math.random() * 365 * 86400000).toISOString()
+                            .split('T')[0],
+                        license: Math.random() > 0.3 ? 'Licensed' : 'Trial',
+                    });
+                }
+            }
+            for (const s of softwareEntries) await dbAdd('software', s);
+
+            // Users
+            for (const d of devices) {
+                const numDomain = Math.floor(Math.random() * 3) + 1;
+                const shuffledDomain = [...domainUsers].sort(() => Math.random() - 0.5);
+                for (let j = 0; j < numDomain; j++) {
+                    await dbAdd('users', {
+                        id: 'usr-d-' + d.id + '-' + j,
+                        orgId,
+                        deviceId: d.id,
+                        username: shuffledDomain[j],
+                        type: 'domain',
+                        isAdmin: Math.random() > 0.7,
+                        lastLogin: new Date(Date.now() - Math.random() * 30 * 86400000).toISOString().split('T')[
+                            0],
+                    });
+                }
+                const numLocal = Math.floor(Math.random() * 3) + 1;
+                const shuffledLocal = [...localUsers].sort(() => Math.random() - 0.5);
+                for (let j = 0; j < numLocal; j++) {
+                    await dbAdd('users', {
+                        id: 'usr-l-' + d.id + '-' + j,
+                        orgId,
+                        deviceId: d.id,
+                        username: shuffledLocal[j],
+                        type: 'local',
+                        isAdmin: shuffledLocal[j] === 'Administrator',
+                        lastLogin: new Date(Date.now() - Math.random() * 60 * 86400000).toISOString().split('T')[
+                            0],
+                    });
+                }
+            }
+
+            // Networks
+            for (let i = 0; i < subnets.length; i++) {
+                await dbAdd('networks', {
+                    id: 'net-' + i,
+                    orgId,
+                    subnet: subnets[i],
+                    vlan: vlans[i],
+                    gateway: subnets[i].replace('0/24', '1').replace('/20', '.1'),
+                    description: `VLAN ${vlans[i]} - ${['Kantor Pusat','Data Center','DMZ','Guest','Lab'][i]||'Segment '+i}`,
+                    deviceCount: devices.filter(d => d.ip && d.ip.startsWith(subnets[i].split('/')[0].split('.').slice(0,
+                        subnets[i].includes('/20') ? 2 : 3).join('.'))).length,
+                });
+            }
+
+            // Credentials
+            const credTypes = ['SSH', 'WMI', 'SNMP', 'API'];
+            for (let i = 0; i < 4; i++) {
+                await dbAdd('credentials', {
+                    id: 'cred-' + i,
+                    orgId,
+                    name: `${credTypes[i]} Credential ${i+1}`,
+                    type: credTypes[i],
+                    username: credTypes[i] === 'SNMP' ? 'public' : 'admin',
+                    password: '********',
+                    notes: `Used for ${credTypes[i]} scanning`,
+                });
+            }
+
+            // Scans
+            for (let i = 0; i < 3; i++) {
+                const scanDate = new Date(Date.now() - i * 7 * 86400000);
+                await dbAdd('scans', {
+                    id: 'scan-' + i,
+                    orgId,
+                    name: `Network Scan ${i+1}`,
+                    subnet: subnets[i],
+                    status: 'completed',
+                    devicesFound: Math.floor(Math.random() * 30) + 15,
+                    startTime: scanDate.toISOString(),
+                    endTime: new Date(scanDate.getTime() + 300000).toISOString(),
+                    log: `Scanning ${subnets[i]}...\nPing sweep complete\nSNMP walk done\nFound devices\nScan finished successfully.`,
+                });
+            }
+
+            // Audit logs
+            for (let i = 0; i < 20; i++) {
+                const actions = ['device_added', 'device_updated', 'scan_started', 'scan_completed', 'user_login',
+                    'report_generated', 'credential_used'
+                ];
+                await dbAdd('auditLogs', {
+                    id: 'audit-' + i,
+                    orgId,
+                    userId: 'demo-user',
+                    username: 'demo',
+                    action: actions[Math.floor(Math.random() * actions.length)],
+                    details: 'Demo audit entry',
+                    timestamp: new Date(Date.now() - Math.random() * 30 * 86400000).toISOString(),
+                });
+            }
+        }
+
+        // ==================== AUTH ====================
+        async function doLogin() {
+            const username = document.getElementById('loginUser').value.trim();
+            const password = document.getElementById('loginPass').value;
+            const msgEl = document.getElementById('loginMsg');
+            msgEl.textContent = '';
+            msgEl.className = 'msg';
+            if (!username || !password) {
+                msgEl.textContent = 'Harap isi semua kolom.';
+                msgEl.className = 'msg error';
+                return;
+            }
+            await openDB();
+            const orgs = await dbGetAll('orgs', 'username', username);
+            if (orgs.length === 0) {
+                msgEl.textContent = 'Pengguna tidak ditemukan.';
+                msgEl.className = 'msg error';
+                return;
+            }
+            const org = orgs[0];
+            const hash = await hashPassword(password, org.salt);
+            if (hash !== org.passwordHash) {
+                msgEl.textContent = 'Kata sandi salah.';
+                msgEl.className = 'msg error';
+                return;
+            }
+            currentUser = { id: org.id, username: org.username, isDemo: org.isDemo || false };
+            currentOrgId = org.id;
+            await logAudit('user_login', 'User logged in');
+            showApp();
+        }
+
+        async function demoLogin() {
+            await openDB();
+            // Reset demo org if exists
+            const existing = await dbGetAll('orgs', 'username', 'demo');
+            let orgId;
+            if (existing.length > 0) {
+                orgId = existing[0].id;
+                // Clear all demo data
+                for (const storeName of Object.keys(STORES)) {
+                    if (storeName === 'orgs') continue;
+                    const all = await dbGetAll(storeName, 'orgId', orgId);
+                    for (const item of all) await dbDelete(storeName, item.id);
+                }
+            } else {
+                const salt = generateSalt();
+                const passwordHash = await hashPassword('demo123', salt);
+                orgId = 'org-demo-' + Date.now();
+                await dbAdd('orgs', { id: orgId, username: 'demo', passwordHash, salt, isDemo: true,
+                    createdAt: new Date().toISOString() });
+            }
+            await seedDemoData(orgId);
+            currentUser = { id: orgId, username: 'demo', isDemo: true };
+            currentOrgId = orgId;
+            await logAudit('demo_login', 'Demo account accessed');
+            showApp();
+        }
+
+        function showApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appScreen').classList.add('active');
+            document.getElementById('headerUser').textContent =
+                `👋 ${currentUser.username}${currentUser.isDemo ? ' (Demo)' : ''}`;
+            setupNavigation();
+            navigateTo('dashboard');
+        }
+
+        function logout() {
+            currentUser = null;
+            currentOrgId = null;
+            document.getElementById('appScreen').classList.remove('active');
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            document.getElementById('loginMsg').textContent = '';
+            closeSlidePanel();
+        }
+
+        // ==================== NAVIGATION ====================
+        function setupNavigation() {
+            const buttons = document.querySelectorAll('#navTabs button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    navigateTo(btn.dataset.tab);
+                });
+            });
+        }
+
+        async function navigateTo(tab) {
+            const main = document.getElementById('mainContent');
+            closeSlidePanel();
+            switch (tab) {
+                case 'dashboard':
+                    main.innerHTML = await renderDashboard();
+                    break;
+                case 'devices':
+                    main.innerHTML = await renderDevicesTab();
+                    break;
+                case 'software':
+                    main.innerHTML = await renderSoftwareTab();
+                    break;
+                case 'users':
+                    main.innerHTML = await renderUsersTab();
+                    break;
+                case 'network':
+                    main.innerHTML = await renderNetworkTab();
+                    break;
+                case 'credentials':
+                    main.innerHTML = await renderCredentialsTab();
+                    break;
+                case 'scanner':
+                    main.innerHTML = await renderScannerTab();
+                    break;
+                case 'reports':
+                    main.innerHTML = await renderReportsTab();
+                    break;
+                case 'audit':
+                    main.innerHTML = await renderAuditTab();
+                    break;
+            }
+            // Rebind any inline event handlers that need dynamic data
+            setTimeout(() => {
+                const searchInput = document.getElementById('deviceSearch');
+                if (searchInput) searchInput.addEventListener('input', () => renderDeviceTable());
+            }, 100);
+        }
+
+        // ==================== DASHBOARD ====================
+        async function renderDashboard() {
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const software = await dbGetAll('software', 'orgId', currentOrgId);
+            const users = await dbGetAll('users', 'orgId', currentOrgId);
+            const networks = await dbGetAll('networks', 'orgId', currentOrgId);
+            const scans = await dbGetAll('scans', 'orgId', currentOrgId);
+            const online = devices.filter(d => d.status === 'online').length;
+            const offline = devices.filter(d => d.status === 'offline').length;
+            const now = new Date();
+            const expiredWarranty = devices.filter(d => new Date(d.warrantyEnd) < now).length;
+            const eolOS = devices.filter(d => d.os.includes('Windows 10') || d.os.includes('Ubuntu 18') || d.os.includes(
+                'Windows 7')).length;
+
+            return `
+            <div class="stats-row">
+              <div class="stat-card accent"><div class="stat-value">${devices.length}</div><div class="stat-label">Total Perangkat</div></div>
+              <div class="stat-card green"><div class="stat-value">${online}</div><div class="stat-label">Online</div></div>
+              <div class="stat-card red"><div class="stat-value">${offline}</div><div class="stat-label">Offline</div></div>
+              <div class="stat-card yellow"><div class="stat-value">${expiredWarranty}</div><div class="stat-label">Garansi Berakhir</div></div>
+              <div class="stat-card" style="border-left:4px solid var(--orange);"><div class="stat-value">${eolOS}</div><div class="stat-label">OS EOL</div></div>
+              <div class="stat-card" style="border-left:4px solid var(--purple);"><div class="stat-value">${software.length}</div><div class="stat-label">Instalasi Software</div></div>
+              <div class="stat-card"><div class="stat-value">${users.length}</div><div class="stat-label">Akun Pengguna</div></div>
+              <div class="stat-card"><div class="stat-value">${networks.length}</div><div class="stat-label">Subnet/VLAN</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+              <div class="table-container" style="max-height:300px;">
+                <table><thead><tr><th>Pemindaian Terakhir</th><th>Status</th><th>Perangkat</th></tr></thead><tbody>
+                ${scans.slice(-5).reverse().map(s=>`<tr><td>${s.name}</td><td><span class="badge ${s.status==='completed'?'online':'warning'}">${s.status}</span></td><td>${s.devicesFound||'-'}</td></tr>`).join('')}
+                </tbody></table>
+              </div>
+              <div class="table-container" style="max-height:300px;">
+                <table><thead><tr><th>OS</th><th>Jumlah</th></tr></thead><tbody>
+                ${Object.entries(devices.reduce((a,d)=>{a[d.os]=(a[d.os]||0)+1;return a;},{})).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([os,c])=>`<tr><td>${os}</td><td>${c}</td></tr>`).join('')}
+                </tbody></table>
+              </div>
+            </div>`;
+        }
+
+        // ==================== DEVICES TAB ====================
+        async function renderDevicesTab() {
+            return `
+            <div class="search-bar">
+              <input type="text" id="deviceSearch" placeholder="🔍 Cari perangkat...">
+              <select id="deviceFilterType" onchange="renderDeviceTable()">
+                <option value="">Semua Tipe</option>
+                <option>Workstation</option><option>Server</option><option>Hypervisor</option><option>Switch</option><option>Firewall</option>
+              </select>
+              <select id="deviceFilterStatus" onchange="renderDeviceTable()">
+                <option value="">Semua Status</option><option>online</option><option>offline</option>
+              </select>
+              <button class="btn-sm primary" onclick="openDeviceModal()">+ Tambah Perangkat</button>
+              <button class="btn-sm" onclick="exportCSV('devices')">📥 Ekspor CSV</button>
+            </div>
+            <div class="table-container" id="deviceTableContainer"></div>`;
+        }
+
+        async function renderDeviceTable(sortKey = 'name', sortDir = 'asc') {
+            const container = document.getElementById('deviceTableContainer');
+            if (!container) return;
+            let devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const search = document.getElementById('deviceSearch')?.value?.toLowerCase() || '';
+            const filterType = document.getElementById('deviceFilterType')?.value || '';
+            const filterStatus = document.getElementById('deviceFilterStatus')?.value || '';
+            if (search) devices = devices.filter(d => d.name.toLowerCase().includes(search) || d.ip.includes(search) || d.os
+                .toLowerCase().includes(search));
+            if (filterType) devices = devices.filter(d => d.type === filterType);
+            if (filterStatus) devices = devices.filter(d => d.status === filterStatus);
+            devices.sort((a, b) => {
+                let va = a[sortKey] || '',
+                    vb = b[sortKey] || '';
+                if (typeof va === 'string') va = va.toLowerCase();
+                if (typeof vb === 'string') vb = vb.toLowerCase();
+                if (va < vb) return sortDir === 'asc' ? -1 : 1;
+                if (va > vb) return sortDir === 'asc' ? 1 : -1;
+                return 0;
+            });
+            const sortIcon = (key) => sortKey === key ? (sortDir === 'asc' ? '▲' : '▼') : '';
+            container.innerHTML = `
+            <table><thead><tr>
+              <th onclick="renderDeviceTable('name','${sortKey==='name'&&sortDir==='asc'?'desc':'asc'}')">Nama ${sortIcon('name')}</th>
+              <th onclick="renderDeviceTable('type','${sortKey==='type'&&sortDir==='asc'?'desc':'asc'}')">Tipe ${sortIcon('type')}</th>
+              <th onclick="renderDeviceTable('os','${sortKey==='os'&&sortDir==='asc'?'desc':'asc'}')">OS ${sortIcon('os')}</th>
+              <th>IP</th><th>Status</th><th>Departemen</th><th>Garansi</th><th>Aksi</th>
+            </tr></thead><tbody>
+            ${devices.map(d=>`
+              <tr>
+                <td><a href="#" onclick="openSlidePanel('${d.id}')" style="color:var(--accent);text-decoration:none;">${d.name}</a></td>
+                <td>${d.type}</td><td>${d.os}</td><td>${d.ip||'-'}</td>
+                <td><span class="badge ${d.status==='online'?'online':'offline'}">${d.status}</span></td>
+                <td>${d.department||'-'}</td>
+                <td><span class="badge ${new Date(d.warrantyEnd)<new Date()?'warning':'online'}">${d.warrantyEnd||'-'}</span></td>
+                <td>
+                  <button class="btn-sm" onclick="openDeviceModal('${d.id}')">Edit</button>
+                  <button class="btn-sm danger" onclick="deleteDevice('${d.id}')">Hapus</button>
+                </td>
+              </tr>`).join('')}
+            </tbody></table>`;
+        }
+
+        async function openDeviceModal(editId = null) {
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            let device = { name: '', type: 'Workstation', os: '', ip: '', mac: '', status: 'online', department: '',
+                location: '', manufacturer: '', model: '', serial: '', warrantyEnd: '', cost: '', cpu: '', ram: '',
+                storage: '', notes: '' };
+            if (editId) {
+                const existing = await dbGet('devices', editId);
+                if (existing) device = existing;
+            }
+            content.innerHTML = `
+            <h3>${editId?'Edit':'Tambah'} Perangkat</h3>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <input id="devName" placeholder="Nama" value="${device.name}">
+              <select id="devType">${['Workstation','Server','Hypervisor','Switch','Firewall','Router','NAS','Printer'].map(t=>`<option ${device.type===t?'selected':''}>${t}</option>`).join('')}</select>
+              <input id="devOS" placeholder="OS" value="${device.os}">
+              <input id="devIP" placeholder="IP" value="${device.ip||''}">
+              <input id="devMAC" placeholder="MAC" value="${device.mac||''}">
+              <select id="devStatus"><option ${device.status==='online'?'selected':''}>online</option><option ${device.status==='offline'?'selected':''}>offline</option></select>
+              <input id="devDept" placeholder="Departemen" value="${device.department||''}">
+              <input id="devLoc" placeholder="Lokasi" value="${device.location||''}">
+              <input id="devManufacturer" placeholder="Manufacturer" value="${device.manufacturer||''}">
+              <input id="devModel" placeholder="Model" value="${device.model||''}">
+              <input id="devSerial" placeholder="Serial" value="${device.serial||''}">
+              <input id="devWarranty" type="date" value="${device.warrantyEnd||''}">
+              <input id="devCost" type="number" placeholder="Biaya (Rp)" value="${device.cost||''}">
+              <input id="devCPU" placeholder="CPU" value="${device.cpu||''}">
+              <input id="devRAM" placeholder="RAM" value="${device.ram||''}">
+              <input id="devStorage" placeholder="Storage" value="${device.storage||''}">
+            </div>
+            <div class="btn-row">
+              <button class="btn-sm" onclick="closeModal()">Batal</button>
+              <button class="btn-sm primary" onclick="saveDevice('${editId||''}')">Simpan</button>
+            </div>`;
+            modal.classList.add('active');
+        }
+
+        async function saveDevice(editId) {
+            const get = (id) => document.getElementById(id)?.value || '';
+            const device = {
+                id: editId || 'dev-' + Date.now(),
+                orgId: currentOrgId,
+                name: get('devName'),
+                type: get('devType'),
+                os: get('devOS'),
+                ip: get('devIP'),
+                mac: get('devMAC'),
+                status: get('devStatus'),
+                department: get('devDept'),
+                location: get('devLoc'),
+                manufacturer: get('devManufacturer'),
+                model: get('devModel'),
+                serial: get('devSerial'),
+                warrantyEnd: get('devWarranty'),
+                cost: parseInt(get('devCost')) || 0,
+                cpu: get('devCPU'),
+                ram: get('devRAM'),
+                storage: get('devStorage'),
+                notes: '',
+                createdAt: editId ? (await dbGet('devices', editId))?.createdAt || new Date().toISOString() : new Date()
+                    .toISOString(),
+                assignedTo: editId ? (await dbGet('devices', editId))?.assignedTo || '' : '',
+                purchaseDate: editId ? (await dbGet('devices', editId))?.purchaseDate || '' : '',
+            };
+            if (editId) {
+                await dbPut('devices', device);
+                await logAudit('device_updated', `Updated device: ${device.name}`);
+            } else {
+                await dbAdd('devices', device);
+                await logAudit('device_added', `Added device: ${device.name}`);
+            }
+            closeModal();
+            await renderDeviceTable();
+        }
+
+        async function deleteDevice(id) {
+            if (!confirm('Hapus perangkat ini? Semua data terkait (software, pengguna) juga akan dihapus.')) return;
+            const device = await dbGet('devices', id);
+            // Cascade delete software
+            const sw = await dbGetAll('software', 'deviceId', id);
+            for (const s of sw) await dbDelete('software', s.id);
+            // Cascade delete users
+            const us = await dbGetAll('users', 'deviceId', id);
+            for (const u of us) await dbDelete('users', u.id);
+            await dbDelete('devices', id);
+            await logAudit('device_deleted', `Deleted device: ${device?.name||id}`);
+            await renderDeviceTable();
+            closeSlidePanel();
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // ==================== SLIDE PANEL ====================
+        async function openSlidePanel(deviceId) {
+            currentSlideDeviceId = deviceId;
+            currentSlideTab = 'overview';
+            document.getElementById('overlay').classList.add('active');
+            document.getElementById('slidePanel').classList.add('open');
+            document.getElementById('slideTitle').textContent = 'Detail Perangkat';
+            document.querySelectorAll('#slideTabs button').forEach(b => b.classList.remove('active'));
+            document.querySelector('#slideTabs button[data-stab="overview"]').classList.add('active');
+            await renderSlideContent();
+        }
+
+        function closeSlidePanel() {
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('slidePanel').classList.remove('open');
+            currentSlideDeviceId = null;
+        }
+
+        async function renderSlideContent() {
+            const body = document.getElementById('slideBody');
+            if (!currentSlideDeviceId) { body.innerHTML = ''; return; }
+            const device = await dbGet('devices', currentSlideDeviceId);
+            if (!device) { body.innerHTML = '<p>Perangkat tidak ditemukan.</p>'; return; }
+            const software = await dbGetAll('software', 'deviceId', currentSlideDeviceId);
+            const users = await dbGetAll('users', 'deviceId', currentSlideDeviceId);
+            const networks = await dbGetAll('networks', 'orgId', currentOrgId);
+            const relatedNetworks = networks.filter(n => device.ip && device.ip.startsWith(n.subnet.split('/')[0].split('.').slice(
+                0, 3).join('.')));
+
+            switch (currentSlideTab) {
+                case 'overview':
+                    body.innerHTML = `
+                <p><strong>Nama:</strong> ${device.name}</p>
+                <p><strong>Tipe:</strong> ${device.type}</p>
+                <p><strong>OS:</strong> ${device.os}</p>
+                <p><strong>IP:</strong> ${device.ip||'-'} | <strong>MAC:</strong> ${device.mac||'-'}</p>
+                <p><strong>Status:</strong> <span class="badge ${device.status==='online'?'online':'offline'}">${device.status}</span></p>
+                <p><strong>Manufacturer:</strong> ${device.manufacturer||'-'} | <strong>Model:</strong> ${device.model||'-'}</p>
+                <p><strong>Serial:</strong> ${device.serial||'-'}</p>
+                <p><strong>CPU:</strong> ${device.cpu||'-'} | <strong>RAM:</strong> ${device.ram||'-'} | <strong>Storage:</strong> ${device.storage||'-'}</p>
+                <p><strong>Departemen:</strong> ${device.department||'-'} | <strong>Lokasi:</strong> ${device.location||'-'}</p>
+                <p><strong>Garansi:</strong> ${device.warrantyEnd||'-'} | <strong>Biaya:</strong> Rp ${(device.cost||0).toLocaleString()}</p>`;
+                    break;
+                case 'software':
+                    body.innerHTML = software.length ?
+                        software.map(s =>
+                            `<p>📦 <strong>${s.name}</strong> v${s.version} — ${s.license||''} (${s.installDate||'-'})</p>`)
+                        .join('') : '<p>Tidak ada software terdaftar.</p>';
+                    break;
+                case 'users':
+                    body.innerHTML = users.length ?
+                        users.map(u =>
+                            `<p>👤 <strong>${u.username}</strong> (${u.type}) ${u.isAdmin?'🔑 Admin':''} — Login: ${u.lastLogin||'-'}</p>`
+                            ).join('') : '<p>Tidak ada akun pengguna.</p>';
+                    break;
+                case 'network':
+                    body.innerHTML = relatedNetworks.length ?
+                        relatedNetworks.map(n =>
+                            `<p>🌐 <strong>${n.subnet}</strong> VLAN ${n.vlan} — Gateway: ${n.gateway} (${n.description})</p>`
+                            ).join('') : '<p>Tidak ada data jaringan terkait.</p>';
+                    break;
+            }
+        }
+
+        // Slide tab switching
+        document.getElementById('slideTabs').addEventListener('click', async (e) => {
+            if (e.target.tagName === 'BUTTON' && e.target.dataset.stab) {
+                document.querySelectorAll('#slideTabs button').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                currentSlideTab = e.target.dataset.stab;
+                await renderSlideContent();
+            }
+        });
+
+        // ==================== SOFTWARE TAB ====================
+        async function renderSoftwareTab() {
+            const software = await dbGetAll('software', 'orgId', currentOrgId);
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const deviceMap = {};
+            devices.forEach(d => deviceMap[d.id] = d.name);
+            return `
+            <div class="search-bar">
+              <input type="text" id="swSearch" placeholder="🔍 Cari software..." oninput="renderSoftwareTable()">
+              <button class="btn-sm" onclick="exportCSV('software')">📥 Ekspor CSV</button>
+            </div>
+            <div class="table-container" id="swTableContainer">
+              <table><thead><tr><th>Aplikasi</th><th>Versi</th><th>Perangkat</th><th>Lisensi</th><th>Tanggal Instal</th></tr></thead><tbody>
+              ${software.map(s=>`<tr><td>${s.name}</td><td>${s.version}</td><td>${deviceMap[s.deviceId]||s.deviceId}</td><td>${s.license||'-'}</td><td>${s.installDate||'-'}</td></tr>`).join('')}
+              </tbody></table>
+            </div>`;
+        }
+
+        async function renderSoftwareTable() {
+            const container = document.getElementById('swTableContainer');
+            if (!container) return;
+            let software = await dbGetAll('software', 'orgId', currentOrgId);
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const deviceMap = {};
+            devices.forEach(d => deviceMap[d.id] = d.name);
+            const search = document.getElementById('swSearch')?.value?.toLowerCase() || '';
+            if (search) software = software.filter(s => s.name.toLowerCase().includes(search) || s.version.includes(search));
+            container.innerHTML = `
+            <table><thead><tr><th>Aplikasi</th><th>Versi</th><th>Perangkat</th><th>Lisensi</th><th>Tanggal Instal</th></tr></thead><tbody>
+            ${software.map(s=>`<tr><td>${s.name}</td><td>${s.version}</td><td>${deviceMap[s.deviceId]||s.deviceId}</td><td>${s.license||'-'}</td><td>${s.installDate||'-'}</td></tr>`).join('')}
+            </tbody></table>`;
+        }
+
+        // ==================== USERS TAB ====================
+        async function renderUsersTab() {
+            const users = await dbGetAll('users', 'orgId', currentOrgId);
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const deviceMap = {};
+            devices.forEach(d => deviceMap[d.id] = d.name);
+            return `
+            <div class="search-bar">
+              <input type="text" id="usrSearch" placeholder="🔍 Cari pengguna..." oninput="renderUsersTable()">
+              <button class="btn-sm" onclick="exportCSV('users')">📥 Ekspor CSV</button>
+            </div>
+            <div class="table-container" id="usrTableContainer">
+              <table><thead><tr><th>Username</th><th>Tipe</th><th>Admin</th><th>Perangkat</th><th>Login Terakhir</th></tr></thead><tbody>
+              ${users.map(u=>`<tr><td>${u.username}</td><td>${u.type}</td><td>${u.isAdmin?'✅':'❌'}</td><td>${deviceMap[u.deviceId]||u.deviceId}</td><td>${u.lastLogin||'-'}</td></tr>`).join('')}
+              </tbody></table>
+            </div>`;
+        }
+
+        async function renderUsersTable() {
+            const container = document.getElementById('usrTableContainer');
+            if (!container) return;
+            let users = await dbGetAll('users', 'orgId', currentOrgId);
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const deviceMap = {};
+            devices.forEach(d => deviceMap[d.id] = d.name);
+            const search = document.getElementById('usrSearch')?.value?.toLowerCase() || '';
+            if (search) users = users.filter(u => u.username.toLowerCase().includes(search));
+            container.innerHTML = `
+            <table><thead><tr><th>Username</th><th>Tipe</th><th>Admin</th><th>Perangkat</th><th>Login Terakhir</th></tr></thead><tbody>
+            ${users.map(u=>`<tr><td>${u.username}</td><td>${u.type}</td><td>${u.isAdmin?'✅':'❌'}</td><td>${deviceMap[u.deviceId]||u.deviceId}</td><td>${u.lastLogin||'-'}</td></tr>`).join('')}
+            </tbody></table>`;
+        }
+
+        // ==================== NETWORK TAB ====================
+        async function renderNetworkTab() {
+            const networks = await dbGetAll('networks', 'orgId', currentOrgId);
+            return `
+            <div class="search-bar">
+              <button class="btn-sm primary" onclick="openNetworkModal()">+ Tambah Subnet/VLAN</button>
+            </div>
+            <div class="table-container">
+              <table><thead><tr><th>Subnet</th><th>VLAN</th><th>Gateway</th><th>Deskripsi</th><th>Perangkat</th><th>Aksi</th></tr></thead><tbody>
+              ${networks.map(n=>`<tr><td>${n.subnet}</td><td>${n.vlan}</td><td>${n.gateway||'-'}</td><td>${n.description||'-'}</td><td>${n.deviceCount||0}</td><td><button class="btn-sm danger" onclick="deleteNetwork('${n.id}')">Hapus</button></td></tr>`).join('')}
+              </tbody></table>
+            </div>`;
+        }
+
+        async function openNetworkModal() {
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+            <h3>Tambah Subnet/VLAN</h3>
+            <input id="netSubnet" placeholder="Subnet (cth: 10.0.1.0/24)">
+            <input id="netVlan" type="number" placeholder="VLAN ID">
+            <input id="netGateway" placeholder="Gateway">
+            <input id="netDesc" placeholder="Deskripsi">
+            <div class="btn-row">
+              <button class="btn-sm" onclick="closeModal()">Batal</button>
+              <button class="btn-sm primary" onclick="saveNetwork()">Simpan</button>
+            </div>`;
+            modal.classList.add('active');
+        }
+
+        async function saveNetwork() {
+            const net = {
+                id: 'net-' + Date.now(),
+                orgId: currentOrgId,
+                subnet: document.getElementById('netSubnet').value,
+                vlan: parseInt(document.getElementById('netVlan').value) || 0,
+                gateway: document.getElementById('netGateway').value,
+                description: document.getElementById('netDesc').value,
+                deviceCount: 0,
+            };
+            await dbAdd('networks', net);
+            await logAudit('network_added', `Added subnet: ${net.subnet}`);
+            closeModal();
+            navigateTo('network');
+        }
+
+        async function deleteNetwork(id) {
+            if (!confirm('Hapus jaringan ini?')) return;
+            await dbDelete('networks', id);
+            await logAudit('network_deleted', `Deleted network: ${id}`);
+            navigateTo('network');
+        }
+
+        // ==================== CREDENTIALS TAB ====================
+        async function renderCredentialsTab() {
+            const creds = await dbGetAll('credentials', 'orgId', currentOrgId);
+            return `
+            <div class="search-bar">
+              <button class="btn-sm primary" onclick="openCredentialModal()">+ Tambah Kredensial</button>
+            </div>
+            <div class="table-container">
+              <table><thead><tr><th>Nama</th><th>Tipe</th><th>Username</th><th>Password</th><th>Catatan</th><th>Aksi</th></tr></thead><tbody>
+              ${creds.map(c=>`<tr><td>${c.name}</td><td>${c.type}</td><td>${c.username}</td><td>${c.password}</td><td>${c.notes||'-'}</td><td><button class="btn-sm danger" onclick="deleteCredential('${c.id}')">Hapus</button></td></tr>`).join('')}
+              </tbody></table>
+            </div>`;
+        }
+
+        async function openCredentialModal() {
+            const modal = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            content.innerHTML = `
+            <h3>Tambah Kredensial</h3>
+            <input id="credName" placeholder="Nama">
+            <select id="credType"><option>SSH</option><option>WMI</option><option>SNMP</option><option>API</option></select>
+            <input id="credUser" placeholder="Username">
+            <input id="credPass" type="password" placeholder="Password">
+            <input id="credNotes" placeholder="Catatan">
+            <div class="btn-row">
+              <button class="btn-sm" onclick="closeModal()">Batal</button>
+              <button class="btn-sm primary" onclick="saveCredential()">Simpan</button>
+            </div>`;
+            modal.classList.add('active');
+        }
+
+        async function saveCredential() {
+            const cred = {
+                id: 'cred-' + Date.now(),
+                orgId: currentOrgId,
+                name: document.getElementById('credName').value,
+                type: document.getElementById('credType').value,
+                username: document.getElementById('credUser').value,
+                password: document.getElementById('credPass').value,
+                notes: document.getElementById('credNotes').value,
+            };
+            await dbAdd('credentials', cred);
+            await logAudit('credential_added', `Added credential: ${cred.name}`);
+            closeModal();
+            navigateTo('credentials');
+        }
+
+        async function deleteCredential(id) {
+            if (!confirm('Hapus kredensial ini?')) return;
+            await dbDelete('credentials', id);
+            await logAudit('credential_deleted', `Deleted credential: ${id}`);
+            navigateTo('credentials');
+        }
+
+        // ==================== SCANNER TAB ====================
+        async function renderScannerTab() {
+            const scans = await dbGetAll('scans', 'orgId', currentOrgId);
+            const networks = await dbGetAll('networks', 'orgId', currentOrgId);
+            return `
+            <div class="search-bar">
+              <select id="scanSubnet">${networks.map(n=>`<option>${n.subnet}</option>`).join('')}</select>
+              <button class="btn-sm primary" onclick="startScan()">🔎 Mulai Pemindaian</button>
+            </div>
+            <div id="scanProgress" style="display:none;">
+              <div class="progress-bar"><div class="progress-fill" id="scanProgressFill" style="width:0%;"></div></div>
+              <div class="scan-console" id="scanConsole"></div>
+            </div>
+            <div class="table-container">
+              <table><thead><tr><th>Nama</th><th>Subnet</th><th>Status</th><th>Perangkat Ditemukan</th><th>Waktu</th></tr></thead><tbody>
+              ${scans.slice(-10).reverse().map(s=>`<tr><td>${s.name}</td><td>${s.subnet}</td><td><span class="badge ${s.status==='completed'?'online':'warning'}">${s.status}</span></td><td>${s.devicesFound||0}</td><td>${new Date(s.startTime).toLocaleString()}</td></tr>`).join('')}
+              </tbody></table>
+            </div>`;
+        }
+
+        async function startScan() {
+            const subnet = document.getElementById('scanSubnet')?.value || '10.0.1.0/24';
+            const progressDiv = document.getElementById('scanProgress');
+            const fill = document.getElementById('scanProgressFill');
+            const consoleEl = document.getElementById('scanConsole');
+            progressDiv.style.display = 'block';
+            consoleEl.textContent = '';
+            fill.style.width = '0%';
+            const log = (msg) => { consoleEl.textContent += msg + '\n';
+                consoleEl.scrollTop = consoleEl.scrollHeight; };
+            log(`[${new Date().toLocaleTimeString()}] Memulai pemindaian ${subnet}...`);
+            log(`[INFO] Melakukan ping sweep...`);
+            await sleep(600);
+            fill.style.width = '25%';
+            log(`[INFO] 254 host di-ping, 47 merespons.`);
+            await sleep(500);
+            fill.style.width = '50%';
+            log(`[INFO] Menjalankan SNMP walk pada host yang merespons...`);
+            await sleep(700);
+            fill.style.width = '75%';
+            log(`[INFO] Mengidentifikasi OS dan layanan...`);
+            const found = Math.floor(Math.random() * 30) + 10;
+            await sleep(600);
+            fill.style.width = '100%';
+            log(`[SUCCESS] Pemindaian selesai. ${found} perangkat ditemukan.`);
+            log(`[INFO] Menambahkan perangkat baru ke database...`);
+
+            // Add scan record
+            const scan = {
+                id: 'scan-' + Date.now(),
+                orgId: currentOrgId,
+                name: `Scan ${subnet} @ ${new Date().toLocaleTimeString()}`,
+                subnet,
+                status: 'completed',
+                devicesFound: found,
+                startTime: new Date().toISOString(),
+                endTime: new Date().toISOString(),
+                log: consoleEl.textContent,
+            };
+            await dbAdd('scans', scan);
+            // Auto-add some discovered devices
+            for (let i = 0; i < Math.min(found, 8); i++) {
+                const ipLast = Math.floor(Math.random() * 250) + 2;
+                const ip = subnet.replace('0/24', ipLast);
+                const device = {
+                    id: 'dev-scan-' + Date.now() + '-' + i,
+                    orgId: currentOrgId,
+                    name: `Discovered-Host-${ipLast}`,
+                    type: ['Workstation', 'Server', 'Switch'][Math.floor(Math.random() * 3)],
+                    os: ['Windows 11 Pro', 'Ubuntu 22.04', 'Windows Server 2022'][Math.floor(Math.random() * 3)],
+                    ip,
+                    mac: Array.from({ length: 6 }, () => Math.floor(Math.random() * 256).toString(16).padStart(2, '0'))
+                        .join(':'),
+                    status: 'online',
+                    department: 'Discovered',
+                    location: 'Auto-discovered',
+                    manufacturer: ['Dell', 'HP', 'Lenovo'][Math.floor(Math.random() * 3)],
+                    model: 'Unknown',
+                    serial: 'AUTO-' + Math.random().toString(36).substr(2, 6).toUpperCase(),
+                    warrantyEnd: new Date(Date.now() + 3 * 365 * 86400000).toISOString().split('T')[0],
+                    cost: 0,
+                    cpu: 'Unknown',
+                    ram: 'Unknown',
+                    storage: 'Unknown',
+                    notes: 'Ditemukan melalui pemindaian jaringan',
+                    createdAt: new Date().toISOString(),
+                    assignedTo: '',
+                    purchaseDate: '',
+                };
+                await dbAdd('devices', device);
+            }
+            await logAudit('scan_completed', `Scan completed on ${subnet}, found ${found} devices`);
+            setTimeout(() => navigateTo('scanner'), 1500);
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // ==================== REPORTS TAB ====================
+        async function renderReportsTab() {
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const now = new Date();
+            const reports = [
+                { name: 'Perangkat Offline', count: devices.filter(d => d.status === 'offline').length,
+                    icon: '🔴', filter: 'offline' },
+                { name: 'Garansi Berakhir', count: devices.filter(d => new Date(d.warrantyEnd) < now).length,
+                    icon: '⚠️', filter: 'warranty' },
+                { name: 'OS EOL (End of Life)', count: devices.filter(d => d.os.includes('Windows 10') || d.os.includes(
+                        'Ubuntu 18') || d.os.includes('Windows 7')).length, icon: '⏰', filter: 'eol' },
+                { name: 'Perangkat Usang (>5 tahun)', count: devices.filter(d => new Date(d.createdAt) < new Date(Date.now() -
+                        5 * 365 * 86400000)).length, icon: '📦', filter: 'old' },
+                { name: 'Workstation Belum Ditugaskan', count: devices.filter(d => d.type === 'Workstation' && !d
+                        .assignedTo).length, icon: '🖥️', filter: 'unassigned' },
+                { name: 'Server Tanpa Redundansi', count: devices.filter(d => d.type === 'Server').length > 0 ? Math.floor(
+                        devices.filter(d => d.type === 'Server').length * 0.3) : 0, icon: '🖧', filter: 'server' },
+                { name: 'Software Trial/Hampir Habis', count: Math.floor(Math.random() * 15) + 2, icon: '💿',
+                    filter: 'trial' },
+                { name: 'Kredensial Kedaluwarsa', count: Math.floor(Math.random() * 5), icon: '🔐', filter: 'creds' },
+            ];
+            return `
+            <div class="stats-row">${reports.map(r=>`
+              <div class="stat-card" style="cursor:pointer;" onclick="showReportDetail('${r.filter}')">
+                <div class="stat-value">${r.icon} ${r.count}</div><div class="stat-label">${r.name}</div>
+              </div>`).join('')}</div>
+            <div class="table-container" id="reportDetailContainer">
+              <p style="padding:20px;color:var(--text2);">Klik salah satu kartu laporan di atas untuk melihat detail.</p>
+            </div>`;
+        }
+
+        async function showReportDetail(filter) {
+            const container = document.getElementById('reportDetailContainer');
+            if (!container) return;
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const now = new Date();
+            let filtered = [];
+            let title = '';
+            switch (filter) {
+                case 'offline':
+                    filtered = devices.filter(d => d.status === 'offline');
+                    title = 'Perangkat Offline';
+                    break;
+                case 'warranty':
+                    filtered = devices.filter(d => new Date(d.warrantyEnd) < now);
+                    title = 'Garansi Berakhir';
+                    break;
+                case 'eol':
+                    filtered = devices.filter(d => d.os.includes('Windows 10') || d.os.includes('Ubuntu 18') || d.os.includes(
+                        'Windows 7'));
+                    title = 'OS EOL';
+                    break;
+                case 'old':
+                    filtered = devices.filter(d => new Date(d.createdAt) < new Date(Date.now() - 5 * 365 * 86400000));
+                    title = 'Perangkat Usang (>5 tahun)';
+                    break;
+                case 'unassigned':
+                    filtered = devices.filter(d => d.type === 'Workstation' && !d.assignedTo);
+                    title = 'Workstation Belum Ditugaskan';
+                    break;
+                case 'server':
+                    filtered = devices.filter(d => d.type === 'Server');
+                    title = 'Server';
+                    break;
+                default:
+                    filtered = devices.slice(0, 10);
+                    title = 'Laporan';
+            }
+            container.innerHTML = `
+            <h3 style="padding:12px;">${title} (${filtered.length})</h3>
+            <table><thead><tr><th>Nama</th><th>Tipe</th><th>OS</th><th>IP</th><th>Status</th><th>Garansi</th></tr></thead><tbody>
+            ${filtered.map(d=>`<tr><td>${d.name}</td><td>${d.type}</td><td>${d.os}</td><td>${d.ip||'-'}</td><td>${d.status}</td><td>${d.warrantyEnd||'-'}</td></tr>`).join('')}
+            </tbody></table>
+            <button class="btn-sm" style="margin:12px;" onclick="exportCSVReport('${filter}')">📥 Ekspor CSV</button>`;
+        }
+
+        // ==================== AUDIT TAB ====================
+        async function renderAuditTab() {
+            const logs = await dbGetAll('auditLogs', 'orgId', currentOrgId);
+            logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            return `
+            <div class="table-container">
+              <table><thead><tr><th>Waktu</th><th>Pengguna</th><th>Aksi</th><th>Detail</th></tr></thead><tbody>
+              ${logs.slice(0,100).map(l=>`<tr><td>${new Date(l.timestamp).toLocaleString()}</td><td>${l.username}</td><td>${l.action}</td><td>${l.details||''}</td></tr>`).join('')}
+              </tbody></table>
+            </div>`;
+        }
+
+        // ==================== CSV EXPORT ====================
+        function exportCSV(type) {
+            (async () => {
+                let data = [];
+                let filename = 'export.csv';
+                switch (type) {
+                    case 'devices':
+                        data = await dbGetAll('devices', 'orgId', currentOrgId);
+                        filename = 'netmap_devices.csv';
+                        break;
+                    case 'software':
+                        data = await dbGetAll('software', 'orgId', currentOrgId);
+                        filename = 'netmap_software.csv';
+                        break;
+                    case 'users':
+                        data = await dbGetAll('users', 'orgId', currentOrgId);
+                        filename = 'netmap_users.csv';
+                        break;
+                }
+                if (data.length === 0) return alert('Tidak ada data untuk diekspor.');
+                const keys = Object.keys(data[0]);
+                const csv = [keys.join(','), ...data.map(row => keys.map(k => '"' + String(row[k] || '').replace(/"/g,
+                    '""') + '"').join(','))].join('\n');
+                const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+            })();
+        }
+
+        async function exportCSVReport(filter) {
+            const devices = await dbGetAll('devices', 'orgId', currentOrgId);
+            const now = new Date();
+            let filtered = [];
+            switch (filter) {
+                case 'offline':
+                    filtered = devices.filter(d => d.status === 'offline');
+                    break;
+                case 'warranty':
+                    filtered = devices.filter(d => new Date(d.warrantyEnd) < now);
+                    break;
+                case 'eol':
+                    filtered = devices.filter(d => d.os.includes('Windows 10') || d.os.includes('Ubuntu 18') || d.os.includes(
+                        'Windows 7'));
+                    break;
+                case 'old':
+                    filtered = devices.filter(d => new Date(d.createdAt) < new Date(Date.now() - 5 * 365 * 86400000));
+                    break;
+                case 'unassigned':
+                    filtered = devices.filter(d => d.type === 'Workstation' && !d.assignedTo);
+                    break;
+                default:
+                    filtered = devices;
+            }
+            const keys = ['name', 'type', 'os', 'ip', 'status', 'warrantyEnd', 'department'];
+            const csv = [keys.join(','), ...filtered.map(row => keys.map(k => '"' + String(row[k] || '').replace(/"/g,
+                '""') + '"').join(','))].join('\n');
+            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `netmap_report_${filter}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ==================== INITIALIZATION ====================
+        async function init() {
+            await openDB();
+            // Check if we need to register a default admin user
+            const orgs = await dbGetAll('orgs');
+            if (orgs.length === 0) {
+                const salt = generateSalt();
+                const passwordHash = await hashPassword('admin', salt);
+                await dbAdd('orgs', { id: 'org-admin-001', username: 'admin', passwordHash, salt, isDemo: false,
+                    createdAt: new Date().toISOString() });
+                // Seed some initial data for admin
+                const adminOrgId = 'org-admin-001';
+                for (let i = 1; i <= 5; i++) {
+                    await dbAdd('devices', {
+                        id: 'dev-init-' + i,
+                        orgId: adminOrgId,
+                        name: `Admin-Device-${i}`,
+                        type: 'Workstation',
+                        os: 'Windows 11 Pro',
+                        ip: `192.168.1.${i+10}`,
+                        mac: 'aa:bb:cc:dd:ee:' + i.toString(16).padStart(2, '0'),
+                        status: 'online',
+                        department: 'IT',
+                        location: 'Jakarta',
+                        manufacturer: 'Dell',
+                        model: 'OptiPlex 7000',
+                        serial: 'SN-INIT-' + i,
+                        warrantyEnd: '2026-12-31',
+                        cost: 15000000,
+                        cpu: 'Intel Core i7-13700',
+                        ram: '32 GB',
+                        storage: '512 GB SSD',
+                        notes: '',
+                        createdAt: new Date().toISOString(),
+                        assignedTo: 'admin',
+                        purchaseDate: '2024-01-15',
+                    });
+                }
+            }
+        }
+
+        // Global click handlers
+        document.getElementById('modalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // Init
+        init().then(() => {
+            console.log('NetMap Pro ready. IndexedDB initialized.');
+        }).catch(err => {
+            console.error('Init error:', err);
+        });
+
+        console.log('%c🖥️ NetMap Pro %cReady',
+            'font-size:1.2em;font-weight:bold;color:#3b82f6;', 'color:#10b981;');
+        console.log('%cFitur: %cAutentikasi SHA-256 | IndexedDB 9 Store | CRUD Perangkat | Pemindaian Simulasi | Laporan | Ekspor CSV | Panel Detail Geser | Akun Demo',
+            'color:#f59e0b;', 'color:#e2e8f0;');
+        console.log('%cLogin: admin / admin  |  Demo: klik "Jelajahi dengan Akun Demo"', 'color:#94a3b8;');
+    </script>
+</body>
+                                                           </html>
