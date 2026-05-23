@@ -1,12 +1,10 @@
-# 🖥️ NetMap Pro — Inventaris Aset TI & Penemuan Jaringan
+## 🖥️ NetMap Pro — Inventaris Aset TI & Penemuan Jaringan
 
 **NetMap Pro** adalah aplikasi web lengkap untuk melacak perangkat, perangkat lunak, pengguna, kredensial, dan topologi jaringan secara real-time. Dibangun murni dengan HTML, CSS, dan JavaScript tanpa backend atau dependensi eksternal, menggunakan IndexedDB sebagai database lokal dan SubtleCrypto untuk autentikasi aman.
 
-![NetMap Pro Dashboard](https://via.placeholder.com/800x450/0b0f17/3b82f6?text=NetMap+Pro+Dashboard)
-
 ---
 
-## 🚀 Fitur Utama
+## 🚀 Fitur
 
 - 📊 **Dasbor Waktu Nyata** — Statistik ringkasan perangkat, status online/offline, garansi, OS, dan lainnya.
 - 🖥️ **Manajemen Perangkat** — Tabel yang dapat diurutkan, dicari, dan difilter. CRUD lengkap (tambah, edit, hapus).
@@ -35,7 +33,7 @@
 
 ---
 
-## 🖥️ Cara Menjalankan
+## 🖥️ Menjalankan
 
 1. **Clone repository** ini atau download file `index.html`.
 2. Buka file `index.html` di browser modern (Chrome, Firefox, Edge).
@@ -63,6 +61,15 @@ Akun demo **direset setiap kali login** sehingga Anda bebas bereksperimen.
 
 ---
 
-## 📂 Struktur Proyek
+## 🧪 Teknis
 
-Karena ini aplikasi **single-file**, seluruh kode ada dalam satu file:
+- **Database IndexedDB** — 9 penyimpanan objek: `orgs`, `devices`, `software`, `users`, `networks`, `credentials`, `scans`, `auditLogs`, `settings`. Dilengkapi indeks untuk pencarian cepat dan penghapusan berjenjang (cascade delete).
+- **Keamanan** — Password tidak pernah disimpan dalam bentuk plaintext. Kombinasi SHA-256 + salt 16-byte membuat brute-force tidak praktis.
+- **Ketahanan Data** — Semua data (perangkat, software, pengguna, pemindaian) tetap ada setelah refresh tab, restart browser, atau bahkan reboot sistem.
+- **UI Responsif** — Didesain untuk desktop dan tablet, dengan panel geser yang berfungsi baik di layar kecil.
+
+---
+
+## 🌟 Dukungan
+
+Jika proyek ini bermanfaat, beri ⭐ di GitHub dan bagikan ke rekan tim TI Anda!
